@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MHF4U Final Project: Amusement Park Function Modeling</title>
+
+  <!-- w3.css -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- MathJax (v3) -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --panel:#0f1720;
+      --accent:#0ea5e9;   /* tech blue */
+      --deep-blue:#0b63a8; /* deep dot color */
+      --muted:#bcdff6;
+      --card-bg: rgba(255,255,255,0.03);
+      --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+      --sans: "Roboto", Arial, sans-serif;
+      --maxwidth: 1100px;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:#e6f4ff;
+      font-family:var(--sans);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      box-sizing:border-box;
+    }
+
+    .card{
+      width:100%;
+      max-width:var(--maxwidth);
+      margin:auto;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:36px;
+      box-sizing:border-box;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+    }
+
+    h1.title{
+      font-family:var(--serif);
+      font-size:clamp(28px,3.6vw,44px);
+      margin:0 0 12px 0;
+      color:var(--muted);
+      line-height:1.05;
+    }
+
+    .sub{
+      color:#d7ecff;
+      margin:6px 0;
+      font-weight:600;
+    }
+
+    .meta{
+      color:#c6e8ff;
+      margin-top:10px;
+      font-size:0.98rem;
+    }
+
+    /* Contents page styling */
+    .contents-grid {
+      display:block;
+      margin-top:18px;
+      padding:28px;
+      border-radius:10px;
+      background:
+        linear-gradient(180deg, rgba(14,165,233,0.03), rgba(14,165,233,0.01)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="transparent"/><g stroke="%2344b0e6" stroke-width="0.6" opacity="0.18"><path d="M0 200h600M0 100h600M0 300h600M300 0v400M150 0v400M450 0v400"/></g></svg>');
+      background-size:cover;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6) inset;
+    }
+
+    .toc-list{
+      list-style:none;
+      padding-left:0;
+      margin:0;
+      max-width:880px;
+    }
+
+    .toc-item{
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      padding:10px 6px;
+    }
+
+    .toc-item .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:var(--deep-blue);
+      margin-top:7px;
+      flex:0 0 12px;
+    }
+
+    .toc-item .icon-sep{
+      width:36px;
+      height:36px;
+      flex:0 0 36px;
+      margin-top:2px;
+    }
+
+    .toc-item .title{
+      color:#e9f7ff;
+      font-weight:600;
+      text-align:left;
+    }
+
+    /* page anchor nav */
+    nav.topnav{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    a.btn{
+      text-decoration:none;
+      color:var(--bg);
+      background:var(--accent);
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:600;
+      box-shadow:0 4px 14px rgba(14,165,233,0.12);
+    }
+
+    /* content pages */
+    section.content-section{
+      padding:28px;
+      margin-top:20px;
+      background:var(--card-bg);
+      border-radius:10px;
+    }
+
+    .iframe-wrap{
+      width:100%;
+      max-width:900px;
+      margin:14px 0 8px 0;
+      border-radius:8px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .iframe-wrap iframe{
+      width:100%;
+      height:520px;
+      border:0;
+      display:block;
+    }
+
+    @media(max-width:800px){
+      .iframe-wrap iframe{ height:420px; }
+      .card{ padding:22px; }
+    }
+
+    /* small muted label for math paragraphs */
+    .math-block{
+      margin-top:10px;
+      color:#dff4ff;
+      font-size:0.98rem;
+      line-height:1.5;
+      background:rgba(255,255,255,0.02);
+      padding:12px;
+      border-radius:8px;
+    }
+
+    /* center container but left-align list content as requested */
+    .center-left{
+      margin: 0 auto;
+      max-width: var(--maxwidth);
+      text-align:center;
+    }
+    .center-left .left{
+      text-align:left;
+      display:inline-block;
+      width:100%;
+      max-width:880px;
+    }
+
+    /* small svg function curve used as separator */
+    .curve{
+      width:64px;
+      height:28px;
+      margin-top:6px;
+    }
+
+    /* anchor link style */
+    a.anchor-link { color:var(--accent); text-decoration:none; font-weight:600; }
+  </style>
+</head>
+<body>
+
+  <!-- HOME -->
+  <div id="home" class="wrap">
+    <div class="card w3-animate-opacity">
+      <nav class="topnav" aria-label="top navigation">
+        <a class="btn" href=" ">Go to Contents</a >
+        <a class="btn" href="#section-1">Open Section 1</a >
+      </nav>
+
+      <h1 class="title">MHF4U Final Project: Amusement Park Function Modeling</h1>
+      <div class="sub">Student name: <strong>MIJUN WANG</strong></div>
+      <div class="sub">Student ID: <strong>25059957</strong></div>
+      <div class="sub">Course: <strong>[MHF4U] CCT Final Project</strong></div>
+
+      <div class="meta" style="margin-top:18px;">
+        A concise, academic-themed portfolio of function models applied to amusement park structures and rides.
+      </div>
+
+      <div style="margin-top:22px; display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="btn" href="#contents">Contents</a >
+        <a class="btn" href="#section-1">Start Project</a >
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENTS (page 2) -->
+  <div id="contents" class="wrap" style="padding-top:10px; padding-bottom:40px;">
+    <div class="card contents-grid w3-animate-left center-left">
+      <h2 style="font-family:var(--serif); margin:0 0 6px 0; color:var(--muted)">Contents</h2>
+      <p style="margin:0 0 12px 0; color:#cfefff;">(Click an item to jump to its content section)</p >
+
+      <div class="left">
+        <ul class="toc-list" role="list">
+          <!-- 1 -->
+          <li class="toc-item">
+            <div class="dot" aria-hidden="true"></div>
+            <div class="icon-sep">
+              <!-- small light blue function curve svg -->
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <a class="title anchor-link" href="#section-1">1. Happy Valley Roller Coaster - Inverse Proportional Function</a >
+            </div>
+          </li>
+<!-- 2 -->
+          <li class="toc-item">
+            <div class="dot" aria-hidden="true"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href=" ">2. Zootopia Amusement Building - Rational Function7</a ></div>
+          </li>
+
+          <!-- 3 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-3">3. Sunway Lagoon Slide - Cubic Polynomial Function</a ></div>
+          </li>
+
+          <!-- 4 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-4">4. Russian-style Amusement Park Building - Tangent Function</a ></div>
+          </li>
+
+          <!-- 5 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-5">5. Mario Amusement Park - Building Sine Function</a ></div>
+          </li>
+
+          <!-- 6 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-6">6. DisneySea Volcano Structure - Exponential Function</a ></div>
+          </li>
+
+          <!-- 7 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-7">7. Roller Coaster - Logarithmic Function</a ></div>
+          </li>
+
+          <!-- 8 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-8">8. Sunway Lagoon Pirate Ship - Quadratic Function</a ></div>
+          </li>
+
+          <!-- 9 -->
+          <li class="toc-item">
+            <div class="dot"></div>
+            <div class="icon-sep">
+              <svg class="curve" viewBox="0 0 64 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 24 C16 6, 28 2, 62 4" stroke="#8fd7fb" stroke-width="2.8" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div><a class="title anchor-link" href="#section-9">9. Shanghai Disneyland Main Entrance - Square Root Function</a ></div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEGIN CONTENT PAGES -->
+  <div id="content-pages" class="wrap" style="padding-bottom:60px;">
+    <div class="card w3-animate-opacity center-left">
+      <div class="left">
+
+        <!-- SECTION 1 -->
+        <section id="section-1" class="content-section" aria-labelledby="s1title">
+          <h3 id="s1title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Happy Valley Roller Coaster - Inverse Proportional Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap" aria-hidden="false">
+            <iframe src="https://www.desmos.com/calculator/mnx3hd3cts?embed" title="Desmos - Section 1"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            \( \) <!-- placeholder to ensure MathJax processes well -->
+            <div style="margin-top:6px;">
+              \( \)- When transforming the parent function  \( f(x) = \frac{1}{x} \)  to  \( f(x) = \frac{-35}{x-7} - 10 \{ -5 < x < 5.3 \} \) , it is first vertically stretched by a factor of 35 and reflected over the x-axis, then horizontally translated 7 units to the right, and finally vertically translated 10 units downward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \( \)-For the function  \( f(x) = \frac{-35}{x-7} - 10 \) , its domain is  \( (x \in \mathbb{R}, -5 < x < 5.3) \) , which is the interval specified in the function's definition; its range is  \( (y \in \mathbb{R}, -7.08 < y < 10.59) \) , determined by the domain restricting the range of the reciprocal term.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="section-2" class="content-section" aria-labelledby="s2title" style="margin-top:18px;">
+          <h3 id="s2title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Zootopia Amusement Building - Rational Function7</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/wbvnyafesr?embed" title="Desmos - Section 2"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = \frac{1}{x^2} \)  to  \( f(x) = \frac{3.4}{(x-1.8)^2} - 7.5 \{ -0.4 < x < 1.27 \} \) , it is first vertically stretched by a factor of 3.4, then horizontally translated 1.8 units to the right, and finally vertically translated 7.5 units downward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = \frac{3.4}{(x-1.8)^2} - 7.5 \) , its domain is  \( (x \in \mathbb{R}, -0.4 < x < 1.27) \) , which is the interval defined for the function; its range is  \( (y \in \mathbb{R}, -6.80 < y < 4.60) \) , derived from the positive definiteness and boundedness of the squared reciprocal term within the domain.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="section-3" class="content-section" aria-labelledby="s3title" style="margin-top:18px;">
+          <h3 id="s3title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Sunway Lagoon Slide - Cubic Polynomial Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/eoau7mvt48?embed" title="Desmos - Section 3"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = x^3 + x \)  to  \( f(x) = -0.4(x+1.6)^3 + 0.2(x+1.6) - 1 \) , it is first vertically stretched by a factor of 0.4 and reflected over the x-axis, then horizontally translated 1.6 units to the left, and finally vertically translated 1 unit downward.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) For the function  \( f(x) = -0.4(x+1.6)^3 + 0.2(x+1.6) - 1 \) , its domain is  \( (x \in \mathbb{R}, -\infty < x < \infty) \) , as cubic functions (odd-degree polynomials) have no inherent domain constraints; its range is also  \( (y \in \mathbb{R}, -\infty < y < \infty) \) , since cubic functions are unbounded, and this property remains unchanged after scaling and translation.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="section-4" class="content-section" aria-labelledby="s4title" style="margin-top:18px;">
+          <h3 id="s4title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Russian-style Amusement Park Building - Tangent Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/eibncnxoqr?embed" title="Desmos - Section 4"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = \tan x \)  to  \( f(x) = 2.3 \tan(0.4x - 6.8) + 5.7 \left\{ -\frac{1}{2}\pi < x < \frac{1}{2}\pi \right\} \) , it is first horizontally stretched by a factor of 2.5, then horizontally translated 17 units to the right, next vertically stretched by a factor of 2.3, and finally vertically translated 5.7 units upward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = 2.3\tan(0.4x - 6.8) + 5.7 \) , its domain is  \( (x \in \mathbb{R}, -\frac{1}{2}\pi < x < \frac{1}{2}\pi) \) , which is the given interval (with none of the tangent function’s vertical asymptotes falling within this interval); its range is  \( (y \in \mathbb{R}, -\infty < y < \infty) \) , as the tangent function can cover all real numbers, and this characteristic is not altered by scaling and translation.
+            </div>
+          </div>
+<!-- SECTION 5 -->
+        <section id="section-5" class="content-section" aria-labelledby="s5title" style="margin-top:18px;">
+          <h3 id="s5title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Mario Amusement Park - Building Sine Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/v9r9casd6k?embed" title="Desmos - Section 5"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = \sin x \)  to  \( f(x) = -0.8 \cdot \sin(0.8x + 0.2) + 2.9 \{ -5 < x \} \) , it is first horizontally stretched by a factor of 1.25, then horizontally translated 0.25 units to the left, next vertically stretched by a factor of 0.8 and reflected over the x-axis, and finally vertically translated 2.9 units upward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = -0.8\sin(0.8x + 0.2) + 2.9 \) , its domain is  \( (x \in \mathbb{R}, -5 < x < \infty) \) , limited by the given lower bound; its range is  \( (y \in \mathbb{R}, 2.10 \leq y \leq 3.70) \) , adjusted by vertical scaling and translation based on the sine function’s inherent range of \([-1,1]\).
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="section-6" class="content-section" aria-labelledby="s6title" style="margin-top:18px;">
+          <h3 id="s6title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">DisneySea Volcano Structure - Exponential Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/cbgnodroey?embed" title="Desmos - Section 6"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = 2^x \)  to  \( g(x) = 10 \cdot 2^{0.3(x + 3.1)} + 0.8 \{ -12 < x \} \) , it is first horizontally stretched by a factor of  \( \frac{10}{3} \) , then horizontally translated 3.1 units to the left, next vertically stretched by a factor of 10, and finally vertically translated 0.8 units upward with a domain restriction; when transformed to  \( h(x) = 10 \cdot 2^{0.3(-x + 3.1)} + 0.8 \{ 2 < x \} \) , it is horizontally reflected over the y-axis based on the transformation of  \( g(x) \)  and then the domain is adjusted.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( g(x) = 10 \cdot 2^{0.3(x+3.1)} + 0.8 \) , its domain is  \( (x \in \mathbb{R}, -12 < x < \infty) \) , determined by the given lower bound; its range is  \( (y \in \mathbb{R}, 2.35 < y < \infty) \) , since the exponential function  \( 2^t > 0 \)  and the exponential term has a lower bound within the domain. For the function  \( h(x) = 10 \cdot 2^{0.3(-x+3.1)} + 0.8 \) , its domain is  \( (x \in \mathbb{R}, 2 < x < \infty) \) , limited by the given lower bound; its range is  \( (y \in \mathbb{R}, 0.8 < y < 13.40) \) , as the exponential term approaches 0 as  \( x \)  increases and has an upper bound within the domain.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="section-7" class="content-section" aria-labelledby="s7title" style="margin-top:18px;">
+          <h3 id="s7title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Roller Coaster - Logarithmic Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/cua5jdhkyn?embed" title="Desmos - Section 7"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = \log_2 x \)  to  \( f(x) = -1.5 \cdot \log_2(x + 0.1) - 1.7 \{ 0 < x \} \) , it is first vertically stretched by a factor of 1.5 and reflected over the x-axis, then horizontally translated 0.1 units to the left, and finally vertically translated 1.7 units downward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = -1.5\log_2(x + 0.1) - 1.7 \) , its domain is  \( (x \in \mathbb{R}, 0 < x < \infty) \) —the argument of the logarithm  \( x + 0.1 > 0 \) , and the domain is further restricted to  \( x > 0 \) ; its range is  \( (y \in \mathbb{R}, -\infty < y < 3.30) \) , adjusted by scaling and translation, as the value of the logarithmic function can increase to infinity.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="section-8" class="content-section" aria-labelledby="s8title" style="margin-top:18px;">
+          <h3 id="s8title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Sunway Lagoon Pirate Ship - Quadratic Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/gxojlenjyp?embed" title="Desmos - Section 8"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = x^2 \)  to  \( f(x) = -0.14x^2 + 4.3 \{ -3 < x < 3.6 \} \) , it is first vertically stretched by a factor of 0.14 and reflected over the x-axis, then vertically translated 4.3 units upward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = -0.14x^2 + 4.3 \) , its domain is  \( (x \in \mathbb{R}, -3 < x < 3.6) \) , which is the interval defined for the function; its range is  \( (y \in \mathbb{R}, 2.49 < y < 4.30) \) , determined by the vertex (maximum value) of the downward-opening parabola and the smaller values at the endpoints of the domain.
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 9 -->
+        <section id="section-9" class="content-section" aria-labelledby="s9title" style="margin-top:18px;">
+          <h3 id="s9title" style="font-family:var(--serif); margin:0 0 8px 0; color:var(--muted);">Shanghai Disneyland Main Entrance - Square Root Function</h3>
+          <p style="margin:0 0 10px 0; color:#dff8ff;">A header for the site title for this item and the graph below.</p >
+
+          <div class="iframe-wrap">
+            <iframe src="https://www.desmos.com/calculator/qxl5w3le7g?embed" title="Desmos - Section 9"></iframe>
+          </div>
+
+          <div class="math-block">
+            <strong>Transformations：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\) When transforming the parent function  \( f(x) = \sqrt{x} \)  to  \( f(x) = 4.5\sqrt{0.3(x + 16)} + 7.2 \{ -16 < x \} \) , it is first horizontally stretched by a factor of  \( \frac{10}{3} \) , then horizontally translated 16 units to the left, next vertically stretched by a factor of 4.5, and finally vertically translated 7.2 units upward with a domain restriction.
+            </div>
+          </div>
+
+          <div class="math-block" style="margin-top:10px;">
+            <strong>Domain and Range ：</strong><br/>
+            <div style="margin-top:6px;">
+              \(-\)For the function  \( f(x) = 4.5\sqrt{0.3(x + 16)} + 7.2 \) , its domain is  \( (x \in \mathbb{R}, -16 < x < \infty) \) —the radicand of the square root  \( 0.3(x + 16) > 0 \) , requiring  \( x > -16 \) ; its range is  \( (y \in \mathbb{R}, 7.20 < y < \infty) \) , adjusted by scaling and translation, as the square root term is always positive.
+            </div>
+          </div>
+        </section>
+
+        <!-- FOOTER / NAV -->
+        <div style="margin:22px 0 6px 0; display:flex; gap:10px; justify-content:flex-end;">
+          <a class="btn" href=" ">Back to Home</a >
+          <a class="btn" href="#contents">Back to Contents</a >
+        </div>
+
+      </div> <!-- .left -->
+    </div> <!-- .card -->
+  </div> <!-- .wrap -->
+
+  <footer style="text-align:center; padding:18px 6px; color:#8fbfe8; font-size:0.9rem;">
+    © MHF4U Final Project — MIJUN WANG · 25059957
+  </footer>
+
+  <!-- small script to smooth-scroll anchors -->
+  <script>
+    document.querySelectorAll('a.anchor-link').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el){
+          el.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+      });
+    });
+    // smooth for top nav buttons
+    document.querySelectorAll('a.btn[href^="#"]').forEach(a=>{
+      a.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+      });
+    });
+  </script>
+
+</body>
+</html>
